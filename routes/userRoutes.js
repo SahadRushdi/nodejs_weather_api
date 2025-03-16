@@ -49,4 +49,24 @@ router.get('/', async (req, res) => {
     }
   });
 
+  // Update User Location route by email
+router.put('/:email', async (req, res) => {
+    const { location } = req.body;
+  
+    try {
+      let user = await User.findOne({ email: req.params.email });
+  
+      if (!user) return res.status(404).json({ msg: 'User not found' });
+  
+      user.location = location;
+      await user.save();
+  
+      res.json({ msg: 'Location updated successfully', user });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+  
+
 module.exports = router;
