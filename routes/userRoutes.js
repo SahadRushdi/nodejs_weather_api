@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/User');  // Now requiring User from the separate file
 const fetchWeather = require('../utils/weatherService');
+const mongoose = require('mongoose');
 
 // POST route to add a user
 router.post('/', async (req, res) => {
@@ -80,6 +81,16 @@ router.get('/:email/weather', async (req, res) => {
 
         if (!weatherData)
             return res.status(500).json({ msg: 'Failed to fetch weather data' });
+
+        // Save weather data to the user document
+        user.weatherData.push({
+            description: weatherData.description,
+            temperature: weatherData.temperature,
+            feels_like: weatherData.feels_like,
+            humidity: weatherData.humidity,
+        });
+
+        await user.save();
 
         res.json({
             email: user.email,
