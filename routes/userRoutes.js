@@ -24,4 +24,29 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET route to fetch all users
+router.get('/', async (req, res) => {
+    try {
+      const users = await User.find();
+      res.json(users);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+  
+  // GET route to fetch a user by email
+  router.get('/:email', async (req, res) => {
+    try {
+      const user = await User.findOne({ email: req.params.email });
+  
+      if (!user) return res.status(404).json({ msg: 'User not found' });
+  
+      res.json(user);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+
 module.exports = router;
