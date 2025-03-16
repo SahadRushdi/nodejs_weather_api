@@ -1,14 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { addUser, updateUserLocation, getUserWeather } = require('../controllers/userController');
+const User = require('../models/User');
 
-// Add a new user
-router.post('/add', addUser);
+// POST route to add a user
+router.post('/', async (req, res) => {
+  const { email, location } = req.body;
 
-// Update user location
-router.put('/update/:email', updateUserLocation);
+  if (!email || !location) {
+    return res.status(400).json({ msg: 'Please enter email and location' });
+  }
 
-// Get user weather data for a day
-router.get('/weather/:email', getUserWeather);
+  try {
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ msg: 'User already exists' });
+
+    user = new User({ email, location });
+    await user.save();
+
+    res.status(201).json({ msg: 'User created successfully', user });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = router;
