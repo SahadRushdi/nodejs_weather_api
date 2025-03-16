@@ -106,4 +106,39 @@ router.get('/:email/weather', async (req, res) => {
     }
 });
 
+// GET route to fetch users from  a specific date
+router.get('/:email/weather/:date', async (req, res) => {
+    const { email, date } = req.params; // Extract email and date from URL parameters
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        const requestedDate = new Date(date); 
+
+        const weatherOnRequestedDate = user.weatherData.find(
+            (entry) => new Date(entry.date).toISOString().split('T')[0] === requestedDate.toISOString().split('T')[0]
+        );
+
+        if (!weatherOnRequestedDate) {
+            return res.status(404).json({ msg: `No weather data found for ${date}` });
+        }
+
+        res.json({
+            email: user.email,
+            location: user.location,
+            date: weatherOnRequestedDate.date,
+            description: weatherOnRequestedDate.description,
+            temperature: `${weatherOnRequestedDate.temperature}°C`,
+            feels_like: `${weatherOnRequestedDate.feels_like}°C`,
+            humidity: `${weatherOnRequestedDate.humidity}%`,
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
 module.exports = router;
