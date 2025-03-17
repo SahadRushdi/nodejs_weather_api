@@ -18,7 +18,7 @@ const userRoutes = require('./routes/api/users');
 app.use('/api/users', userRoutes);
 
 // Base route
-app.get('/', (req, res) => res.send('✅ API is running...'));
+app.get('/', (req, res) => res.send('😊 Node.JS API is running on Vercel'));
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
