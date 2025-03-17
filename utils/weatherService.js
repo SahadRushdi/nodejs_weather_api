@@ -18,7 +18,7 @@ const fetchWeather = async (location) => {
     };
   } catch (error) {
     console.error('Error fetching weather:', error.message);
-    return null; // Return null if the API fails (e.g., wrong city name)
+    return null; 
   }
 };
 
